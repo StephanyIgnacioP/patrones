@@ -2,47 +2,29 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-// ============================================================================
-// PATRÓN DE COMPORTAMIENTO: STRATEGY
-// ============================================================================
-/**
- * PATRÓN STRATEGY
- * 
- * Propósito: Define una familia de algoritmos (métodos de pago), encapsula 
- * cada uno y los hace intercambiables.
- * 
- * Uso en este caso: Diferentes estrategias para procesar pagos (Efectivo, 
- * Tarjeta, Transferencia) sin que el pedido necesite conocer los detalles
- * de implementación de cada método.
- */
 
 /**
- * Interfaz Strategy - Define el contrato para todos los métodos de pago
+ * Sistema de Procesamiento de Pedidos de Restaurante
+ * Implementa: Factory Method, Decorator y Strategy
  */
+
+// ============================================================================
+// PATRÓN STRATEGY (Comportamiento)
+// Diferentes métodos de pago intercambiables
+// ============================================================================
+
 interface MetodoPago {
-    /**
-     * Procesa el pago por el monto especificado
-     * @param monto Cantidad a pagar
-     * @return true si el pago fue exitoso
-     */
     boolean procesarPago(double monto);
-    
-    /**
-     * Obtiene el nombre del método de pago
-     */
     String getNombre();
 }
-/**
- * Estrategia Concreta 1: Pago en Efectivo
- */
+
 class PagoEfectivo implements MetodoPago {
     
     @Override
     public boolean procesarPago(double monto) {
         System.out.println("💵 Procesando pago en EFECTIVO...");
         System.out.println("   Monto a pagar: Bs. " + String.format("%.2f", monto));
-        System.out.println("   ✅ Pago en efectivo recibido");
-        System.out.println("   Gracias por su preferencia!\n");
+        System.out.println("   ✅ Pago en efectivo recibido\n");
         return true;
     }
     
@@ -51,9 +33,7 @@ class PagoEfectivo implements MetodoPago {
         return "Efectivo";
     }
 }
-/**
- * Estrategia Concreta 2: Pago con Tarjeta
- */
+
 class PagoTarjeta implements MetodoPago {
     private String numeroTarjeta;
     
@@ -79,9 +59,6 @@ class PagoTarjeta implements MetodoPago {
     }
 }
 
-/**
- * Estrategia Concreta 3: Pago por Transferencia
- */
 class PagoTransferencia implements MetodoPago {
     private String numeroCuenta;
     
@@ -105,91 +82,55 @@ class PagoTransferencia implements MetodoPago {
         return "Transferencia";
     }
 }
-// ============================================================================
-// PATRÓN CREACIONAL: FACTORY METHOD
-// ============================================================================
-/**
- * PATRÓN FACTORY METHOD
- * 
- * Propósito: Define una interfaz para crear objetos (pedidos), pero permite
- * que las subclases decidan qué clase instanciar.
- * 
- * Uso en este caso: Crear diferentes tipos de pedidos (Desayuno, Almuerzo, 
- * Cena) sin que el cliente necesite conocer los detalles de construcción
- * de cada tipo.
- */
 
-/**
- * Enumeración de tipos de pedido
- */
+
+// ============================================================================
+// PATRÓN FACTORY METHOD (Creacional)
+// Crea diferentes tipos de pedidos según el tipo solicitado
+// ============================================================================
+
 enum TipoPedido {
     DESAYUNO,
     ALMUERZO,
     CENA
 }
 
-/**
- * Producto Abstracto - Interfaz común para todos los pedidos
- */
 abstract class Pedido {
     protected String nombre;
     protected double precioBase;
     protected String descripcion;
     
-    /**
-     * Constructor del pedido base
-     */
     public Pedido(String nombre, double precioBase, String descripcion) {
         this.nombre = nombre;
         this.precioBase = precioBase;
         this.descripcion = descripcion;
     }
     
-    /**
-     * Método abstracto para preparar el pedido
-     * Cada tipo de pedido implementa su propia preparación
-     */
     public abstract void preparar();
     
-    /**
-     * Obtiene el precio del pedido (puede ser modificado por decoradores)
-     */
     public double getPrecio() {
         return precioBase;
     }
     
-    /**
-     * Obtiene la descripción del pedido
-     */
     public String getDescripcion() {
         return descripcion;
     }
     
-    /**
-     * Obtiene el nombre del pedido
-     */
     public String getNombre() {
         return nombre;
     }
     
-    /**
-     * Muestra el resumen del pedido
-     */
     public void mostrarResumen() {
         System.out.println("   📋 " + nombre);
         System.out.println("      " + descripcion);
         System.out.println("      Precio: Bs. " + String.format("%.2f", getPrecio()));
     }
 }
-/**
- * Producto Concreto 1: Pedido de Desayuno
- */
+
 class PedidoDesayuno extends Pedido {
     
     public PedidoDesayuno() {
-        super("Desayuno Completo", 
-              35.00, 
-              "Huevos, pan, jugo de naranja, café");
+        super("Desayuno Completo", 35.00, "Huevos, pan, jugo de naranja, café");
     }
     
     @Override
@@ -202,15 +143,11 @@ class PedidoDesayuno extends Pedido {
         System.out.println("   ✅ Desayuno listo!\n");
     }
 }
-/**
- * Producto Concreto 2: Pedido de Almuerzo
- */
+
 class PedidoAlmuerzo extends Pedido {
     
     public PedidoAlmuerzo() {
-        super("Almuerzo Ejecutivo", 
-              45.00, 
-              "Sopa, plato principal, postre, refresco");
+        super("Almuerzo Ejecutivo", 45.00, "Sopa, plato principal, postre, refresco");
     }
     
     @Override
@@ -223,15 +160,11 @@ class PedidoAlmuerzo extends Pedido {
         System.out.println("   ✅ Almuerzo listo!\n");
     }
 }
-/**
- * Producto Concreto 3: Pedido de Cena
- */
+
 class PedidoCena extends Pedido {
     
     public PedidoCena() {
-        super("Cena Especial", 
-              55.00, 
-              "Entrada, plato fuerte gourmet, vino, postre");
+        super("Cena Especial", 55.00, "Entrada, plato fuerte gourmet, vino, postre");
     }
     
     @Override
@@ -245,21 +178,8 @@ class PedidoCena extends Pedido {
     }
 }
 
-/**
- * Factory - Fábrica de Pedidos
- * 
- * Esta clase implementa el patrón Factory Method.
- * Encapsula la lógica de creación de diferentes tipos de pedidos.
- */
 class FabricaPedidos {
     
-    /**
-     * Factory Method: Crea el pedido apropiado según el tipo solicitado
-     * 
-     * @param tipo Tipo de pedido a crear
-     * @return Instancia del pedido correspondiente
-     * @throws IllegalArgumentException si el tipo no es válido
-     */
     public static Pedido crearPedido(TipoPedido tipo) {
         switch (tipo) {
             case DESAYUNO:
@@ -276,27 +196,13 @@ class FabricaPedidos {
 
 
 // ============================================================================
-// PATRÓN ESTRUCTURAL: DECORATOR
+// PATRÓN DECORATOR (Estructural)
+// Agrega extras a pedidos sin modificar las clases originales
 // ============================================================================
-/**
- * PATRÓN DECORATOR
- * 
- * Propósito: Permite agregar funcionalidades adicionales a un objeto 
- * dinámicamente sin modificar su estructura original.
- * 
- * Uso en este caso: Agregar extras/modificadores a los pedidos (queso extra,
- * porción adicional, bebida premium) sin modificar las clases de pedido base.
- */
 
-/**
- * Decorador Base - Implementa la misma interfaz que Pedido
- */
 abstract class PedidoDecorador extends Pedido {
     protected Pedido pedidoBase;
     
-    /**
-     * Constructor que recibe el pedido a decorar
-     */
     public PedidoDecorador(Pedido pedidoBase) {
         super(pedidoBase.getNombre(), pedidoBase.getPrecio(), pedidoBase.getDescripcion());
         this.pedidoBase = pedidoBase;
@@ -307,9 +213,7 @@ abstract class PedidoDecorador extends Pedido {
         pedidoBase.preparar();
     }
 }
-/**
- * Decorador Concreto 1: Agrega Queso Extra
- */
+
 class ConQuesoExtra extends PedidoDecorador {
     
     public ConQuesoExtra(Pedido pedidoBase) {
@@ -332,9 +236,7 @@ class ConQuesoExtra extends PedidoDecorador {
         System.out.println("🧀 Agregando QUESO EXTRA de primera calidad...");
     }
 }
-/**
- * Decorador Concreto 2: Agrega Porción Extra
- */
+
 class ConPorcionExtra extends PedidoDecorador {
     
     public ConPorcionExtra(Pedido pedidoBase) {
@@ -358,9 +260,6 @@ class ConPorcionExtra extends PedidoDecorador {
     }
 }
 
-/**
- * Decorador Concreto 3: Agrega Bebida Premium
- */
 class ConBebidaPremium extends PedidoDecorador {
     
     public ConBebidaPremium(Pedido pedidoBase) {
@@ -383,13 +282,12 @@ class ConBebidaPremium extends PedidoDecorador {
         System.out.println("🥤 Agregando BEBIDA PREMIUM (jugo natural o smoothie)...");
     }
 }
+
+
 // ============================================================================
-// SISTEMA DE RESTAURANTE - INTEGRACIÓN DE PATRONES
+// SISTEMA PRINCIPAL - Integra los 3 patrones
 // ============================================================================
-/**
- * Clase principal que gestiona los pedidos del restaurante
- * Integra los tres patrones de diseño
- */
+
 class SistemaRestaurante {
     private List<Pedido> pedidos;
     
@@ -397,15 +295,7 @@ class SistemaRestaurante {
         this.pedidos = new ArrayList<>();
     }
     
-    /**
-     * Método principal que demuestra el uso integrado de los tres patrones
-     * 
-     * @param tipoPedido Tipo de pedido base a crear (Factory Method)
-     * @param agregarQueso Si se agrega queso extra (Decorator)
-     * @param agregarPorcion Si se agrega porción extra (Decorator)
-     * @param agregarBebida Si se agrega bebida premium (Decorator)
-     * @param metodoPago Método de pago a utilizar (Strategy)
-     */
+    // Método que usa los 3 patrones juntos
     public void procesarPedido(TipoPedido tipoPedido, 
                               boolean agregarQueso,
                               boolean agregarPorcion,
@@ -419,18 +309,12 @@ class SistemaRestaurante {
                           .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
         System.out.println();
         
-        // ═══════════════════════════════════════════════════════════
-        // PASO 1: PATRÓN CREACIONAL - FACTORY METHOD
-        // ═══════════════════════════════════════════════════════════
-        // Crear el pedido base usando el Factory
+        // 1. FACTORY METHOD: Crear pedido base
         Pedido pedido = FabricaPedidos.crearPedido(tipoPedido);
         System.out.println("✓ Pedido creado: " + pedido.getNombre());
         System.out.println();
         
-        // ═══════════════════════════════════════════════════════════
-        // PASO 2: PATRÓN ESTRUCTURAL - DECORATOR
-        // ═══════════════════════════════════════════════════════════
-        // Agregar extras/modificadores dinámicamente
+        // 2. DECORATOR: Agregar extras dinámicamente
         if (agregarQueso) {
             pedido = new ConQuesoExtra(pedido);
             System.out.println("✓ Agregado: Queso Extra (+Bs. 8.00)");
@@ -448,24 +332,21 @@ class SistemaRestaurante {
         
         System.out.println();
         
-        // Mostrar resumen del pedido
+        // Mostrar resumen
         System.out.println("───────────────────────────────────────────────────────");
         System.out.println("RESUMEN DEL PEDIDO:");
         System.out.println("───────────────────────────────────────────────────────");
         pedido.mostrarResumen();
         System.out.println();
         
-        // Preparar el pedido
+        // Preparar
         System.out.println("───────────────────────────────────────────────────────");
         System.out.println("PREPARACIÓN:");
         System.out.println("───────────────────────────────────────────────────────");
         pedido.preparar();
         System.out.println("✅ Pedido completamente preparado!\n");
         
-        // ═══════════════════════════════════════════════════════════
-        // PASO 3: PATRÓN DE COMPORTAMIENTO - STRATEGY
-        // ═══════════════════════════════════════════════════════════
-        // Procesar el pago con la estrategia seleccionada
+        // 3. STRATEGY: Procesar pago con método elegido
         System.out.println("───────────────────────────────────────────────────────");
         System.out.println("PROCESAMIENTO DE PAGO:");
         System.out.println("───────────────────────────────────────────────────────");
@@ -485,9 +366,6 @@ class SistemaRestaurante {
         System.out.println("═══════════════════════════════════════════════════════\n\n");
     }
     
-    /**
-     * Muestra estadísticas de los pedidos procesados
-     */
     public void mostrarEstadisticas() {
         System.out.println("\n╔═══════════════════════════════════════════════════════╗");
         System.out.println("║         ESTADÍSTICAS DEL RESTAURANTE                 ║");
@@ -506,9 +384,11 @@ class SistemaRestaurante {
     }
 }
 
-/**
- * Clase principal con el método main para demostrar el sistema
- */
+
+// ============================================================================
+// MAIN - Demostración
+// ============================================================================
+
 public class RestaurantOrderSystem {
     
     public static void main(String[] args) {
@@ -519,24 +399,21 @@ public class RestaurantOrderSystem {
         
         SistemaRestaurante sistema = new SistemaRestaurante();
         
-        // ═══════════════════════════════════════════════════════════
-        // EJEMPLO: Almuerzo con extras y pago con tarjeta
-        // Demuestra los 3 patrones trabajando juntos
-        // ═══════════════════════════════════════════════════════════
+        // Ejemplo: Almuerzo con extras
         System.out.println("📌 PEDIDO: Almuerzo con extras");
         System.out.println("   Factory Method: Crea PedidoAlmuerzo");
         System.out.println("   Decorator: Agrega Queso Extra + Bebida Premium");
         System.out.println("   Strategy: Procesa pago con Tarjeta\n");
         
         sistema.procesarPedido(
-            TipoPedido.ALMUERZO,              // Factory Method: crea el pedido base
-            true,                              // Decorator: agrega queso extra
-            false,                             // Sin porción extra
-            true,                              // Decorator: agrega bebida premium
-            new PagoTarjeta("1234567890123456") // Strategy: método de pago
+            TipoPedido.ALMUERZO,              // Factory Method
+            true,                              // Decorator: queso
+            false,                             // Sin porción
+            true,                              // Decorator: bebida
+            new PagoTarjeta("1234567890123456") // Strategy
         );
         
-        // Resumen de patrones utilizados
+        // Resumen de patrones
         System.out.println("\n╔═══════════════════════════════════════════════════════╗");
         System.out.println("║    RESUMEN DE PATRONES IMPLEMENTADOS                 ║");
         System.out.println("╚═══════════════════════════════════════════════════════╝");
